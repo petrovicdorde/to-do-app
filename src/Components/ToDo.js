@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ToDo = ({ todo, index, markTodo, deleteTodo }) => {
+const ToDo = ({ todo, index, markTodo, deleteTodo, editTodo }) => {
     return (
         <div className="col-4">
             <div className="card text-center">
@@ -13,6 +13,7 @@ const ToDo = ({ todo, index, markTodo, deleteTodo }) => {
                 <div className="card-footer">
                     <button onClick={() => {deleteTodo(index)}}className="btn btn-danger float-left">Delete</button>
                     <button onClick={() => {markTodo(index)}} className="btn btn-warning float-right">Mark</button>
+                    <button onClick={() => {editTodo(index)}} className="btn float-right">Edit</button>
                 </div>
             </div>
         </div>

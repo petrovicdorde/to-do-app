@@ -1,58 +1,72 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from "react";
 import Jumbotron from "./Components/Jumbotron";
 import NewToDo from "./Components/NewToDo";
 import ToDoList from "./Components/ToDoList";
 import "./App.css";
 
-class App extends Component {
+const App = () => {
+  const [todos, setTodos] = useState([]);
+  const [editedTodo, setEditedTodo] = useState(null);
 
-    state = {
-        todos: []
+  useEffect(() => {
+    let data = [];
+
+    if (localStorage.data) {
+      data = JSON.parse(localStorage.data);
     }
 
-    //opppop
+    setTodos(data);
+  }, []);
 
-    componentDidMount() {
-        let data = [];
+  const addIntoTodos = (todo) => {
+    todo.id = Math.floor(Math.random() * (100 - 10) - 10);
+    localStorage.data = JSON.stringify([...todos, todo]);
+    setTodos([...todos, todo]);
+  };
 
-        if(localStorage.data) {
-            data = JSON.parse(localStorage.data)
-        }
+  const markTodo = (index) => {
+    const copyTodos = [...todos];
+    copyTodos[index].done = !copyTodos[index].done;
+    localStorage.data = JSON.stringify(copyTodos);
+    setTodos(copyTodos);
+  };
 
-        this.setState({
-            todos : data
-        })
-    }
+  const deleteTodo = (index) => {
+    const copyTodos = [...todos];
+    copyTodos.splice(index, 1);
+    localStorage.data = JSON.stringify(copyTodos);
+    setTodos(copyTodos);
+  };
 
-    addIntoTodos = (todo) => {
-        todo.id = Math.floor(Math.random()*(100-10)-10);
-        localStorage.data = JSON.stringify([...this.state.todos,todo])
-        this.setState({todos: [...this.state.todos,todo]})
-    }
+  const editTodo = (index) => {
+    setEditedTodo({ todo: todos[index], index });
+  };
 
-    markTodo = (index) => {
-        const copyTodos = [...this.state.todos];
-        copyTodos[index].done = !copyTodos[index].done
-        localStorage.data = JSON.stringify(copyTodos);
-        this.setState({todos:copyTodos})
-    }
+  const editIntoTodo = (msg) => {
+    const copyTodos = [...todos];
+    copyTodos[editedTodo.index].msg = msg;
+    localStorage.data = JSON.stringify(copyTodos);
+    setTodos(copyTodos);
+    setEditedTodo(null);
+  };
 
-    deleteTodo = (index) => {
-        const copyTodos = [...this.state.todos];
-        copyTodos.splice(index, 1)
-        localStorage.data = JSON.stringify(copyTodos);
-        this.setState({todos:copyTodos})
-    }
-
-    render() {
-        return (
-            <div className="wrapp">
-                <Jumbotron />
-                <NewToDo addIntoTodos={this.addIntoTodos}/>
-                <ToDoList todos={this.state.todos} markTodo={this.markTodo} deleteTodo={this.deleteTodo} />
-            </div>
-        )
-    }
-}
+  return (
+    <div className="wrapp">
+      <Jumbotron />
+      <NewToDo
+        addIntoTodos={addIntoTodos}
+        value={editedTodo ? editedTodo : { todo: {} }}
+        mode={editedTodo ? "edit" : "add"}
+        editIntoTodo={editIntoTodo}
+      />
+      <ToDoList
+        todos={todos}
+        markTodo={markTodo}
+        deleteTodo={deleteTodo}
+        editTodo={editTodo}
+      />
+    </div>
+  );
+};
 
 export default App;

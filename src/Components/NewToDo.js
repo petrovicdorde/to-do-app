@@ -1,39 +1,64 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from "react";
 
-class NewToDo extends Component {
+const NewToDo = ({
+  addIntoTodos,
+  value = { todo: {} },
+  mode,
+  editIntoTodo,
+}) => {
+  const [msg, setMsg] = useState(value.todo.msg);
 
-    state = {
-        msg: "",
-        done: false
+  useEffect(() => {
+    setMsg(value.todo.msg);
+  }, [value]);
+
+  const setNewMsg = (e) => {
+    setMsg(e.target.value);
+  };
+
+  const addTodo = () => {
+    if (msg !== "") {
+      addIntoTodos({ msg, done: false });
+      setMsg("");
     }
+  };
 
-    setNewMsg = (e) => {
-        this.setState({
-            msg : e.target.value
-        })
-    }
+  const myEditTodo = () => {
+    editIntoTodo(msg);
+    setMsg("");
+  };
 
-    addTodo = () => {
-        this.props.addIntoTodos(this.state);
-        this.setState({msg: ""})
-    }
-
-    render() {
-        return (
-            <div className="container">
-                <div className="row m-5">
-                    <div className="col-8 offset-2">
-                        <div className="input-group">
-                            <input type="text" className="form-control" value={this.state.msg} placeholder="New meassage" onChange={this.setNewMsg}/>
-                            <div className="input-group-append">
-                                <button onClick={this.addTodo} className="btn btn-primary">Add</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  return (
+    <div className="container">
+      <div className="row m-5">
+        <div className="col-8 offset-2">
+          <div className="input-group">
+            <input
+              type="text"
+              className="form-control"
+              value={msg}
+              placeholder="New meassage"
+              onChange={setNewMsg}
+            />
+            <div className="input-group-append">
+              <button
+                onClick={() => {
+                  if (mode == "add") {
+                    addTodo();
+                  } else {
+                    myEditTodo();
+                  }
+                }}
+                className="btn btn-primary"
+              >
+                {mode}
+              </button>
             </div>
-        )
-    }
-}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default NewToDo;
